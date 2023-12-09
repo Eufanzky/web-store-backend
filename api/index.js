@@ -9,7 +9,7 @@ const {
 } = require('./middlewares/error.handler');
 
 const app = express();
-const port = 3000; //puerto del servidor
+const port = process.env.PORT || 3000; //puerto del servidor
 
 app.use(express.json());
 
@@ -23,13 +23,13 @@ const options = {
     }
   }
 }
-app.use(cors(options));
 
-app.get('/', (req, res) => {
+
+app.get('/api', (req, res) => {
   res.send('Hola mi server en express');
 });
 
-app.get('/nueva-ruta', (req, res) => {
+app.get('/api/nueva-ruta', (req, res) => {
   res.send('Hola soy un nuevo endpoint');
 });
 
@@ -39,6 +39,7 @@ app.get('/home', (req, res) => {
 
 routerApi(app);
 
+app.use(cors(options));
 app.use(logErrors);
 app.use(boomErrorHandler);
 app.use(errorHandler);

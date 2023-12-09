@@ -10,16 +10,16 @@ class ShoppingCartService {
     const limit = 5;
     for (let index = 0; index < limit; index++) {
       this.shoppingCart.push({
-        productId: faker.datatype.uuid(),
+        productId: faker.string.uuid(),
         name: faker.commerce.productName(),
         price: parseInt(faker.commerce.price(), 10),
-        image: faker.image.imageUrl(),
+        image: faker.image.url(),
       });
     }
   }
   async create() {
     const newProduct = {
-      id: faker.datatype.uuid(),
+      id: faker.string.uuid(),
       ...data,
     };
     this.shoppingCart.push(newProduct);

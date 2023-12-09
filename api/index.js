@@ -13,17 +13,20 @@ const port = process.env.PORT || 3000; //puerto del servidor
 
 app.use(express.json());
 
-const whitelist = ['http://localhost:5500', 'https://myapp.co','http://localhost:3000'];
+const whitelist = [
+  'http://localhost:5500',
+  'https://myapp.co',
+  'http://localhost:3000',
+];
 const options = {
   origin: (origin, callback) => {
     if (whitelist.includes(origin)) {
-      callback(null, true)
+      callback(null, true);
     } else {
-      callback(new Error('No permission'))
+      callback(new Error('no permitido'));
     }
-  }
-}
-
+  },
+};
 
 app.get('/api', (req, res) => {
   res.send('Hola mi server en express');

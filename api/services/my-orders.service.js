@@ -16,10 +16,10 @@ class MyOrdersService {
     const productsArray = [];
     for (let j = 0; j < getRandomInt(10); j++) {
       productsArray.push({
-        productId: faker.datatype.uuid(),
+        productId: faker.string.uuid(),
         name: faker.commerce.productName(),
         price: parseInt(faker.commerce.price(), 10),
-        image: faker.image.imageUrl(),
+        image: faker.image.url(),
       });
     }
     for (let index = 0; index < limit; index++) {

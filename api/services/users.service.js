@@ -1,6 +1,10 @@
 const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
 
+const getConnection = require('../libs/postgres')
+
+
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -29,12 +33,16 @@ class UsersService {
     this.products.push(newUser);
     return newUser;
   }
-  find() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(this.users);
-      }, 5000);
-    });
+  async find() {
+    const client = await getConnection();
+    const rta = await client.query('SELECT * FROM tasks');
+    return rta.rows;
+
+    // return new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve(this.users);
+    //   }, 5000);
+    // });
   }
   async findOne(id) {
     const user = this.users.find((item) => item.userId === id);

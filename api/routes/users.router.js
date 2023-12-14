@@ -11,11 +11,15 @@ const {
 const router = express.Router();
 const service = new UsersService();
 
-router.get('/', validatorHandler(getUserSchema, 'params'), async (req, res) => {
-  const users = await service.find();
-  res.status(200).json(users);
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await service.find();
+    res.json(users)
+  } catch (error) {
+    next(error)
+  }
 });
-router.get('/:userId', async (req, res, next) => {
+router.get('/:userId', validatorHandler(getUserSchema, 'params'), async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await service.findOne(userId);

@@ -1,9 +1,6 @@
 const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-
-const getConnection = require('../libs/postgres')
-
-
+const pool = require('../libs/postgres.pool');
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -12,6 +9,8 @@ class UsersService {
   constructor() {
     this.users = [];
     this.generate();
+    this.pool = pool;
+    this.pool.on('error', (err) => console.error(err));
   }
   generate() {
     for (let index = 0; index < 10; index++) {
@@ -34,15 +33,9 @@ class UsersService {
     return newUser;
   }
   async find() {
-    const client = await getConnection();
-    const rta = await client.query('SELECT * FROM tasks');
+    const query = 'SELECT * FROM tasks';
+    const rta = await this.pool.query(query);
     return rta.rows;
-
-    // return new Promise((resolve, reject) => {
-    //   setTimeout(() => {
-    //     resolve(this.users);
-    //   }, 5000);
-    // });
   }
   async findOne(id) {
     const user = this.users.find((item) => item.userId === id);

@@ -12,23 +12,23 @@ const router = express.Router();
 const service = new CategoriesService();
 
 //Categories
+router.get('/', async (req, res) => {
+  const categories = await service.find();
+  res.status(200).json(categories);
+});
 router.get(
-  '/',
+  '/:categoryId',
   validatorHandler(getCategorySchema, 'params'),
-  async (req, res) => {
-    const categories = await service.find();
-    res.status(200).json(categories);
+  async (req, res, next) => {
+    try {
+      const { categoryId } = req.params;
+      const category = await service.findOne(categoryId);
+      res.status(200).json(category);
+    } catch (error) {
+      next(error);
+    }
   },
 );
-router.get('/:categoryId', async (req, res, next) => {
-  try {
-    const { categoryId } = req.params;
-    const category = await service.findOne(categoryId);
-    res.status(200).json(category);
-  } catch (error) {
-    next(error);
-  }
-});
 router.get('/:categoryId/products/:productId', (req, res) => {
   const { categoryId, productId } = req.params;
   res.status(200).json({

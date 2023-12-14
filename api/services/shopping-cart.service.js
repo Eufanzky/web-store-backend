@@ -1,10 +1,13 @@
 const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
+const pool = require('../libs/postgres.pool');
 
 class ShoppingCartService {
   constructor() {
     this.shoppingCart = [];
     this.generate();
+    this.pool = pool;
+    this.pool.on('error', (err) => console.error(err));
   }
   generate() {
     const limit = 5;
@@ -25,12 +28,15 @@ class ShoppingCartService {
     this.shoppingCart.push(newProduct);
     return newProduct;
   }
-  find() {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(this.shoppingCart);
-      }, 5000);
-    });
+  async find() {
+    const query = 'SELECT * FROM tasks';
+    const rta = await this.pool.query(query);
+    return rta.rows;
+    // return new Promise((resolve, reject) => {
+    //   setTimeout(() => {
+    //     resolve(this.shoppingCart);
+    //   }, 5000);
+    // });
   }
   async delete() {
     const index = this.shoppingCart.findIndex((item) => item.productId === id);

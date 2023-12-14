@@ -12,7 +12,7 @@ const router = express.Router();
 const service = new ShoppingCartService();
 
 //Shopping Cart
-router.get('/', validatorHandler(getShoppingCartSchema, 'params'),async (req, res) => {
+router.get('/',async (req, res) => {
   const shoppingCart = await service.find();
   res.json(shoppingCart);
 });

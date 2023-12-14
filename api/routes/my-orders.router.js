@@ -12,23 +12,23 @@ const router = express.Router();
 const service = new MyOrdersService();
 
 //My orders
+router.get('/', async (req, res) => {
+  const myOrders = await service.find();
+  res.status(200).json(myOrders);
+});
 router.get(
-  '/',
+  '/:orderId',
   validatorHandler(getMyOrderSchema, 'params'),
-  async (req, res) => {
-    const myOrders = await service.find();
-    res.status(200).json(myOrders);
+  async (req, res, next) => {
+    try {
+      const { orderId } = req.params;
+      const order = await service.findOne(orderId);
+      res.status(200).json(order);
+    } catch (error) {
+      next(error);
+    }
   },
 );
-router.get('/:orderId', async (req, res, next) => {
-  try {
-    const { orderId } = req.params;
-    const order = await service.findOne(orderId);
-    res.status(200).json(order);
-  } catch (error) {
-    next(error);
-  }
-});
 
 router.post(
   '/',

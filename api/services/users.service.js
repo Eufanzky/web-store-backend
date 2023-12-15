@@ -1,6 +1,6 @@
 const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-const pool = require('../libs/postgres.pool');
+const {models} = require('../libs/sequelize')
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -9,8 +9,8 @@ class UsersService {
   constructor() {
     this.users = [];
     this.generate();
-    this.pool = pool;
-    this.pool.on('error', (err) => console.error(err));
+    // this.pool = pool;
+    // this.pool.on('error', (err) => console.error(err));
   }
   generate() {
     for (let index = 0; index < 10; index++) {
@@ -33,9 +33,8 @@ class UsersService {
     return newUser;
   }
   async find() {
-    const query = 'SELECT * FROM tasks';
-    const rta = await this.pool.query(query);
-    return rta.rows;
+    const rta = await models.User.findAll();
+    return rta;
   }
   async findOne(id) {
     const user = this.users.find((item) => item.userId === id);

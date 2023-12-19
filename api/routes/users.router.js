@@ -51,7 +51,7 @@ router.patch(
   },
 );
 
-router.delete('/userId', async (req, res) => {
+router.delete('/:userId', async (req, res) => {
   const { userId } = req.params;
   const result = await service.delete(userId);
   res.status(200).json(result);

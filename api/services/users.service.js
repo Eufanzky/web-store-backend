@@ -1,71 +1,39 @@
-const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-const { models } = require('../libs/sequelize')
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-class UsersService {
-  constructor() {
-    this.users = [];
-    this.generate();
-    // this.pool = pool;
-    // this.pool.on('error', (err) => console.error(err));
-  }
-  generate() {
-    for (let index = 0; index < 10; index++) {
-      this.users.push({
-        userId: faker.database.mongodbObjectId(),
-        name: faker.person.fullName(),
-        gender: faker.person.gender(),
-        age: getRandomInt(100),
-        email: faker.internet.email(),
-        isBlocked: faker.datatype.boolean(),
-      });
-    }
-  }
+const { models } = require('./../libs/sequelize');
+
+class UserService {
+  constructor() {}
+
   async create(data) {
-    const newUser = {
-      userId: faker.database.mongodbObjectId(),
-      ...data,
-    };
-    this.products.push(newUser);
+    const newUser = await models.User.create(data);
     return newUser;
   }
+
   async find() {
     const rta = await models.User.findAll();
     return rta;
   }
+
   async findOne(id) {
-    const user = this.users.find((item) => item.userId === id);
+    const user = await models.User.findByPk(id);
     if (!user) {
-      throw boom.notFound('User Not Found');
-    }
-    if (user.isBlocked) {
-      throw boom.conflict('User Is Blocked');
+      throw boom.notFound('user not found');
     }
     return user;
   }
+
   async update(id, changes) {
-    const index = this.users.findIndex((item) => item.userId === id);
-    if (index === -1) {
-      throw boom.notFound('User Not Found');
-    }
-    const user = this.users[index];
-    this.users[index] = {
-      ...user,
-      ...changes,
-    };
-    return this.users[index];
+    const user = await this.findOne(id);
+    const rta = await user.update(changes);
+    return rta;
   }
+
   async delete(id) {
-    const index = this.users.findIndex((item) => item.userId === id);
-    if (index === -1) {
-      throw boom.notFound('User Not Found');
-    }
-    this.users.splice(index, 1);
+    const user = await this.findOne(id);
+    await user.destroy();
     return { id };
   }
 }
 
-module.exports = UsersService;
+module.exports = UserService;

@@ -1,6 +1,6 @@
 const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-const {models} = require('../libs/sequelize')
+const { models } = require('../libs/sequelize')
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);

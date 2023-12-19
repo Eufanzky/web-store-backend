@@ -1,6 +1,7 @@
 const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
 const pool = require('../libs/postgres.pool');
+const { models } = require('../libs/sequelize');
 
 class ShoppingCartService {
   constructor() {
@@ -29,14 +30,8 @@ class ShoppingCartService {
     return newProduct;
   }
   async find() {
-    const query = 'SELECT * FROM tasks';
-    const rta = await this.pool.query(query);
-    return rta.rows;
-    // return new Promise((resolve, reject) => {
-    //   setTimeout(() => {
-    //     resolve(this.shoppingCart);
-    //   }, 5000);
-    // });
+    const rta = await models.ShoppingCart.findAll();
+    return rta;
   }
   async delete() {
     const index = this.shoppingCart.findIndex((item) => item.productId === id);

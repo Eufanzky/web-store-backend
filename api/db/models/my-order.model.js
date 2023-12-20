@@ -11,13 +11,11 @@ const MyOrderSchema = {
     allowNull: false,
     type: DataTypes.STRING,
   },
-  price: {
+  createdAt: {
     allowNull: false,
-    type: DataTypes.INTEGER,
-  },
-  image: {
-    allowNull: true,
-    type: DataTypes.STRING,
+    type: DataTypes.DATE,
+    field: 'created_at',
+    defaultValue: Sequelize.NOW,
   },
 };
 

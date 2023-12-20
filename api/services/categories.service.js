@@ -6,19 +6,8 @@ const { models } = require('../libs/sequelize');
 
 class CategoriesService {
   constructor() {
-    // this.categories = [];
-    // this.generate();
-    // this.pool = pool;
-    // this.pool.on('error', (err) => console.error(err));
   }
   generate() {
-    // const limit = 100;
-    // for (let index = 0; index < limit; index++) {
-    //   this.categories.push({
-    //     categoryId: faker.database.mongodbObjectId(),
-    //     name: faker.commerce.productAdjective(),
-    //   });
-    // }
   }
 
   async create(data) {
@@ -34,7 +23,7 @@ class CategoriesService {
   async findOne(id) {
     const category = await models.Category.findByPk(id);
     if (!category) {
-      throw boom.notFound('user not found');
+      throw boom.notFound('category not found');
     }
     return category;
   }

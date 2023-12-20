@@ -11,14 +11,6 @@ const ShoppingCartSchema = {
     allowNull: false,
     type: DataTypes.STRING,
   },
-  price: {
-    allowNull: false,
-    type: DataTypes.INTEGER,
-  },
-  image: {
-    allowNull: true,
-    type: DataTypes.STRING,
-  },
 };
 
 class ShoppingCart extends Model {

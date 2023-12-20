@@ -6,23 +6,8 @@ const { models } = require('../libs/sequelize');
 
 class ProductService {
   constructor() {
-    // this.products = [];
-    // this.generate();
-    // this.pool = pool;
-    // this.pool.on('error', (err) => console.error(err));
   }
-  // generate() {
-  //   const limit = 100;
-  //   for (let index = 0; index < limit; index++) {
-  //     this.products.push({
-  //       productId: faker.string.uuid(),
-  //       name: faker.commerce.productName(),
-  //       price: parseInt(faker.commerce.price(), 10),
-  //       image: faker.image.url(),
-  //       isBlocked: faker.datatype.boolean(),
-  //     });
-  //   }
-  // }
+
   async create(data) {
     const newProduct = await models.Product.create(data);
     return newProduct;
@@ -34,10 +19,10 @@ class ProductService {
   async findOne(id) {
     const product = await models.Product.findByPk(id);
     if (!product) {
-      throw boom.notFound('user not found');
+      throw boom.notFound('product not found');
     }
     if (product.isBlocked) {
-      throw boom.conflict('Product is Blocked');
+      throw boom.conflict('product is Blocked');
     }
     return product;
   }

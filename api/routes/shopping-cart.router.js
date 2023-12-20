@@ -12,24 +12,55 @@ const router = express.Router();
 const service = new ShoppingCartService();
 
 //Shopping Cart
-router.get('/',async (req, res) => {
+router.get('/', async (req, res) => {
   const shoppingCart = await service.find();
   res.json(shoppingCart);
 });
+
+router.get(
+  '/:shoppingCartId',
+  validatorHandler(getShoppingCartSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { shoppingCartId } = req.params;
+      const shoppingCart= await service.findOne(shoppingCartId);
+      res.status(200).json(shoppingCart);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.post(
   '/',
   validatorHandler(createShoppingCartSchema, 'body'),
   async (req, res) => {
     const body = req.body;
-    const newProduct = await service.create(body);
-    res.status(201).json(newProduct);
+    const newShoppingCart = await service.create(body);
+    res.status(201).json(newShoppingCart);
   },
 );
 
-router.delete('/:productId', async (req, res) => {
-  const { productId } = req.params;
-  const result = await service.delete(productId);
+
+router.patch(
+  '/:shoppingCartId',
+  validatorHandler(getShoppingCartSchema, 'params'),
+  validatorHandler(updateShoppingCartSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { shoppingCartId } = req.params;
+      const body = req.body;
+      const shoppingCart = await service.update(shoppingCartId, body);
+      res.status(200).json(shoppingCart);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.delete('/:shoppingCartId', async (req, res) => {
+  const { shoppingCartId } = req.params;
+  const result = await service.delete(shoppingCartId);
   res.status(200).json(result);
 });
 

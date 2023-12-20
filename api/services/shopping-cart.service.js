@@ -5,40 +5,32 @@ const { models } = require('../libs/sequelize');
 
 class ShoppingCartService {
   constructor() {
-    this.shoppingCart = [];
-    this.generate();
-    this.pool = pool;
-    this.pool.on('error', (err) => console.error(err));
   }
   generate() {
-    const limit = 5;
-    for (let index = 0; index < limit; index++) {
-      this.shoppingCart.push({
-        productId: faker.string.uuid(),
-        name: faker.commerce.productName(),
-        price: parseInt(faker.commerce.price(), 10),
-        image: faker.image.url(),
-      });
-    }
   }
-  async create() {
-    const newProduct = {
-      id: faker.string.uuid(),
-      ...data,
-    };
-    this.shoppingCart.push(newProduct);
-    return newProduct;
+  async create(data) {
+    const newShoppingCart = await models.ShoppingCart.create(data);
+    return newShoppingCart;
   }
   async find() {
     const rta = await models.ShoppingCart.findAll();
     return rta;
   }
-  async delete() {
-    const index = this.shoppingCart.findIndex((item) => item.productId === id);
-    if (index === -1) {
-      throw boom.notFound('Product Not Found');
+  async findOne(id) {
+    const shoppingCart = await models.ShoppingCart.findByPk(id);
+    if (!shoppingCart) {
+      throw boom.notFound('order not found');
     }
-    this.shoppingCart.splice(index, 1);
+    return shoppingCart;
+  }
+  async update(id, changes) {
+    const shoppingCart = await this.findOne(id);
+    const rta = await shoppingCart.update(changes);
+    return rta;
+  }
+  async delete(id) {
+    const shoppingCart = await this.findOne(id);
+    await shoppingCart.destroy();
     return { id };
   }
 }

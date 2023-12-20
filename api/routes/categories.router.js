@@ -29,13 +29,6 @@ router.get(
     }
   },
 );
-router.get('/:categoryId/products/:productId', (req, res) => {
-  const { categoryId, productId } = req.params;
-  res.status(200).json({
-    productId,
-    categoryId,
-  });
-});
 
 router.post(
   '/',

@@ -1,7 +1,6 @@
-const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
-const pool = require('../libs/postgres.pool');
 const { models } = require('../libs/sequelize');
+
 
 
 class CategoriesService {
@@ -21,7 +20,9 @@ class CategoriesService {
   }
 
   async findOne(id) {
-    const category = await models.Category.findByPk(id);
+    const category = await models.Category.findByPk(id, {
+      include: ['products']
+    });
     if (!category) {
       throw boom.notFound('category not found');
     }

@@ -1,4 +1,3 @@
-const { faker } = require('@faker-js/faker');
 const boom = require('@hapi/boom');
 const { models } = require('../libs/sequelize');
 
@@ -21,7 +20,7 @@ class ProductService {
       throw boom.notFound('product not found');
     }
     if (product.isBlocked) {
-      throw boom.conflict('product is Blocked');
+      throw boom.conflict('product is blocked');
     }
     return product;
   }

@@ -19,9 +19,9 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.drop(PRODUCT_TABLE);
-    await queryInterface.drop(CATEGORY_TABLE);
-    await queryInterface.drop(MY_ORDER_TABLE);
-    await queryInterface.drop(SHOPPING_CART_TABLE);
+    await queryInterface.dropTable(PRODUCT_TABLE);
+    await queryInterface.dropTable(CATEGORY_TABLE);
+    await queryInterface.dropTable(MY_ORDER_TABLE);
+    await queryInterface.dropTable(SHOPPING_CART_TABLE);
   },
 };

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const routerApi = require('./routes');
+const { checkApiKey } = require('./middlewares/auth.handler');
 
 const {
   logErrors,
@@ -15,7 +16,7 @@ const port = process.env.PORT || 3000; //puerto del servidor
 app.use(express.json());
 
 const whitelist = [
-  'http://localhost:5500',
+  'http://localhost:8080',
   'https://myapp.co',
   'http://localhost:3000',
   'http://localhost:5050',
@@ -34,7 +35,7 @@ app.get('/api', (req, res) => {
   res.send('Hola mi server en express');
 });
 
-app.get('/api/nueva-ruta', (req, res) => {
+app.get('/api/nueva-ruta', checkApiKey, (req, res) => {
   res.send('Hola soy un nuevo endpoint');
 });
 

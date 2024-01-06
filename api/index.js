@@ -35,6 +35,8 @@ app.get('/api', (req, res) => {
   res.send('Hola mi server en express');
 });
 
+require('./utils/auth');
+
 app.get('/api/nueva-ruta', checkApiKey, (req, res) => {
   res.send('Hola soy un nuevo endpoint');
 });

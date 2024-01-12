@@ -2,7 +2,7 @@ const express = require('express');
 
 const CategoriesService = require('../services/categories.service');
 const validatorHandler = require('../middlewares/validator.handler');
-const { checkAdminRole } = require('../middlewares/auth.handler');
+const { checkRoles } = require('../middlewares/auth.handler');
 const {
   createCategorySchema,
   updateCategorySchema,
@@ -14,12 +14,23 @@ const router = express.Router();
 const service = new CategoriesService();
 
 //Categories
-router.get('/', async (req, res) => {
-  const categories = await service.find();
-  res.status(200).json(categories);
-});
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  checkRoles('admin', 'seller', 'customer'),
+  async (req, res, next) => {
+    try {
+      const categories = await service.find();
+      res.status(200).json(categories);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 router.get(
   '/:categoryId',
+  passport.authenticate('jwt', { session: false }),
+  checkRoles('admin', 'seller', 'customer'),
   validatorHandler(getCategorySchema, 'params'),
   async (req, res, next) => {
     try {
@@ -35,7 +46,7 @@ router.get(
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  checkAdminRole,
+  checkRoles('admin', 'seller'),
   validatorHandler(createCategorySchema, 'body'),
   async (req, res, next) => {
     try {
@@ -50,6 +61,8 @@ router.post(
 
 router.patch(
   '/:categoryId',
+  passport.authenticate('jwt', { session: false }),
+  checkRoles('admin', 'seller'),
   validatorHandler(getCategorySchema, 'params'),
   validatorHandler(updateCategorySchema, 'body'),
   async (req, res) => {
@@ -60,10 +73,15 @@ router.patch(
   },
 );
 
-router.delete('/:categoryId', async (req, res) => {
-  const { categoryId } = req.params;
-  const result = await service.delete(categoryId);
-  res.status(200).json(result);
-});
+router.delete(
+  '/:categoryId',
+  passport.authenticate('jwt', { session: false }),
+  checkRoles('admin', 'seller'),
+  async (req, res) => {
+    const { categoryId } = req.params;
+    const result = await service.delete(categoryId);
+    res.status(200).json(result);
+  },
+);
 
 module.exports = router;

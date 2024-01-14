@@ -35,30 +35,50 @@ class AuthService {
     };
   }
 
-  async sendMail(email) {
+  async sendRecovery(email) {
     const user = await service.findByEmail(email);
     if (!user) {
       throw boom.unauthorized();
     }
+    const payload = { sub: user.id };
+    const token = jwt.sign(payload, config.jwtSecret, {expiresIn: '15min'});
+    const link = `http://myfrontend.com/recovery?token=${token}`;
+    await service.update(user.id, {recoveryToken: token});
+    const mail = {
+      from: config.smtpEmail,
+      to: `${user.email}`,
+      subject: "Email para recuperar contraseña",
+      html: `<b>Ingresa a este link => ${link}</b>`,
+    }
+    const rta = await this.sendMail(mail);
+    return rta;
+  }
+  async changePassword(token, newPassword) {
+    try {
+      const payload = jwt.verify(token, config.jwtSecret);
+      const user = await service.findOne(payload.sub);
+      if (user.recoveryToken !== token) {
+        throw boom.unauthorized();
+      }
+      const hash = await bcrypt.hash(newPassword, 10);
+      await service.update(user.id, {recoveryToken: null, password: hash});
+      return { message: 'password changed' };
+    } catch (error) {
+      throw boom.unauthorized();
+    }
+  }
+  async sendMail(infoMail) {
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      secure: true, // true for 465, false for other ports
+      host: "smtp.gmail.com",
+      secure: true,
       port: 465,
       auth: {
-        user: process.env.EMAIL,
-        pass: process.env.PASSWORD_EMAIL,
-      },
+        user: config.smtpEmail,
+        pass: config.smtpPassword
+      }
     });
-    await transporter.sendMail({
-      from: process.env.EMAIL, // sender address
-      to: `${user.email}`, // list of receivers
-      subject: 'Nuevo Correo ✔', // Subject line
-      text: 'Hola este es un correp de prueba, del curso de node con autenticacion passport', // plain text body
-      html: '<b>Hola este es un correp de prueba, del curso de node con autenticacion passport</b>', // html body
-    });
-    return {
-      message: 'mail sent',
-    };
+    await transporter.sendMail(infoMail);
+    return { message: 'mail sent' };
   }
 }
 
